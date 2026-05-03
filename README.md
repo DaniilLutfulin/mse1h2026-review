@@ -56,7 +56,7 @@ docker compose up -d --build
 Для локальной разработки, отладки и проверки работоспособности будет удобнее запустить dev версию с автоматическим запуском перенаправления вебхуков через smee 
 
 ```bash
-docker compose -f 'docker-compose-dev.yml' up -d --build
+docker compose --profile dev up -d --build
 ```
 ### 4.  Проверка статуса
 ```bash
