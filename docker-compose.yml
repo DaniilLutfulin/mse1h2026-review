@@ -110,22 +110,6 @@ services:
           condition: service_healthy
         ollama:
           condition: service_healthy
-      
-  tunnel:
-    container_name: localtunnel
-    image: node:20-alpine3.23
-    command: >
-      sh -c "
-      npm install -g localtunnel &&
-      lt --port 8000
-         --host https://localtunnel.me
-         --subdomain ${TUNNEL_SUBDOMAIN}
-         --local-host backend
-      "
-    networks:
-      - frontend_net
-      - backend_net
-    restart: unless-stopped
 
   backend-tests:
     build:
@@ -149,6 +133,22 @@ services:
       - backend_net
       - mq_net
     command: python3 -m pytest
+
+  smee:
+    profiles: ["dev"]
+    container_name: smee
+    image: node:20-alpine3.23
+    command: >
+      sh -c "
+      npm install -g smee-client &&
+      smee --url ${SMEE_URL} --target http://backend:8000/worker/webhook
+      "
+    networks:
+      - backend_net
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
 
 networks:
   frontend_net:
